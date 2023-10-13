@@ -1,12 +1,15 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:state_management/data.dart';
+
+import 'ReceiveData.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(ChangeNotifierProvider(create: (context) => Data(), child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -23,7 +26,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+  MyHomePage({super.key});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -33,11 +36,12 @@ class _MyHomePageState extends State<MyHomePage> {
   int count = 0;
 
   SnakBarMsg() {
-    ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Value will be decremented")));
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text("Value will be decremented")));
   }
 
-  Increment() {
+// set state method to change
+  /* Increment()
     setState(() {
       count++;
       if (count == 10) {
@@ -45,20 +49,21 @@ class _MyHomePageState extends State<MyHomePage> {
         SnakBarMsg();
       }
     });
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
+    final providerData = Provider.of<Data>(context);
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text(
+          title: const Text(
             "State and provider demo",
           ),
-          titleTextStyle: TextStyle(
+          titleTextStyle: const TextStyle(
             color: Colors.white,
             fontStyle: FontStyle.italic,
-            fontSize: 24.0,
+            fontSize: 32.0,
           ),
           backgroundColor: Colors.deepPurple,
         ),
@@ -66,15 +71,29 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(count.toString()),
+              Container(
+                  margin: const EdgeInsets.only(bottom: 32),
+                  child: Text(providerData.count.toString(),
+                      style:
+                          const TextStyle(color: Colors.deepPurple, fontSize: 40))),
               ElevatedButton(
                   onPressed: () {
-                    Increment();
+                    providerData.Increment();
                   },
                   style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.deepPurple),
-                  child: Text(
+                  child: const Text(
                     "Count",
+                    style: TextStyle(color: Colors.white),
+                  )),
+              ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const ReceiveData()));
+                  },
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.deepPurple),
+                  child: const Text(
+                    "Send Data",
                     style: TextStyle(color: Colors.white),
                   )),
             ],
